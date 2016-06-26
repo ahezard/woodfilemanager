@@ -34,6 +34,15 @@
 #include <iorpg.h>
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+void customSwiSoftReset(void);
+
+#ifdef __cplusplus
+}
+#endif
+
 static void resetAndLoop()
 {
     // Interrupt
@@ -42,17 +51,27 @@ static void resetAndLoop()
     REG_IF = ~0;
 
     DC_FlushAll();
-    DC_InvalidateAll();
+    DC_InvalidateAll();	
+	
+	dbg_printf( "MENU_MSG_ARM7_REBOOT %d\n", MENU_MSG_ARM7_REBOOT);
+	dbg_printf( "MENU_MSG_ARM7_READY_BOOT %d\n", MENU_MSG_ARM7_READY_BOOT);
+	
+	dbg_printf( "Sending MENU_MSG_ARM7_REBOOT msg to ARM7\n" );
 
     fifoSendValue32(FIFO_USER_01,MENU_MSG_ARM7_REBOOT);
     while(true)
     {
-      while(REG_IPC_FIFO_CR&IPC_FIFO_RECV_EMPTY);
-      u32 res=REG_IPC_FIFO_RX;
-      if(FIFO_PACK_VALUE32(FIFO_USER_01,MENU_MSG_ARM7_READY_BOOT)==res) break;
-    }
+	  if(fifoCheckValue32(FIFO_USER_01)) {
+	    u32 res = fifoGetValue32(FIFO_USER_01);
+		dbg_printf( "FIFO_USER_01 value received : %d\n", res);
 
-    swiSoftReset();
+		if(MENU_MSG_ARM7_READY_BOOT==res) break;
+	  }
+    }
+	
+	dbg_printf( "MENU_MSG_ARM7_READY_BOOT msg received\n" );
+
+    customSwiSoftReset();
 }
 
 #if defined(_STORAGE_rpg)
@@ -97,6 +116,8 @@ bool loadRom( const std::string & filename, const std::string & savename, u32 fl
     dbg_printf( "load done\n" );
 
     ELM_Unmount();
+	
+	dbg_printf( "umount done\n" );
 
     resetAndLoop();
     return true;
