@@ -38,6 +38,8 @@
 extern "C" {
 #endif
 void customSwiSoftReset(void);
+void Custom_DC_FlushAll(void);
+void Custom_DC_InvalidateAll(void);
 
 #ifdef __cplusplus
 }
@@ -50,26 +52,26 @@ static void resetAndLoop()
     REG_IE = 0;
     REG_IF = ~0;
 
-    DC_FlushAll();
-    DC_InvalidateAll();	
+    Custom_DC_FlushAll();
+    Custom_DC_InvalidateAll();	
 	
-	dbg_printf( "MENU_MSG_ARM7_REBOOT %d\n", MENU_MSG_ARM7_REBOOT);
-	dbg_printf( "MENU_MSG_ARM7_READY_BOOT %d\n", MENU_MSG_ARM7_READY_BOOT);
+	//dbg_printf( "MENU_MSG_ARM7_REBOOT %d\n", MENU_MSG_ARM7_REBOOT);
+	//dbg_printf( "MENU_MSG_ARM7_READY_BOOT %d\n", MENU_MSG_ARM7_READY_BOOT);
 	
-	dbg_printf( "Sending MENU_MSG_ARM7_REBOOT msg to ARM7\n" );
+	//dbg_printf( "Sending MENU_MSG_ARM7_REBOOT msg to ARM7\n" );
 
     fifoSendValue32(FIFO_USER_01,MENU_MSG_ARM7_REBOOT);
     while(true)
     {
 	  if(fifoCheckValue32(FIFO_USER_01)) {
 	    u32 res = fifoGetValue32(FIFO_USER_01);
-		dbg_printf( "FIFO_USER_01 value received : %d\n", res);
+		//dbg_printf( "FIFO_USER_01 value received : %d\n", res);
 
 		if(MENU_MSG_ARM7_READY_BOOT==res) break;
 	  }
     }
 	
-	dbg_printf( "MENU_MSG_ARM7_READY_BOOT msg received\n" );
+	//dbg_printf( "MENU_MSG_ARM7_READY_BOOT msg received\n" );
 
     customSwiSoftReset();
 }

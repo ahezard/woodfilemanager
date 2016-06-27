@@ -70,13 +70,13 @@ static void prepairReset()
   REG_POWERCNT|=POWER_SOUND;  
 
   //reset DMA
-  zeroMemory((void *)0x40000B0,0x30);
+  zeroMemory((void *)0x40000B0,0x30);  
+
+  //REG_IME=IME_DISABLE;
+  //REG_IE=0;
+  REG_IF=~0;
   
   fifoSendValue32(FIFO_USER_01,MENU_MSG_ARM7_READY_BOOT);
-
-  REG_IME=IME_DISABLE;
-  REG_IE=0;
-  REG_IF=~0;
 
   swiDelay(1);
 }
