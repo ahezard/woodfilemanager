@@ -28,7 +28,7 @@ ARCH	:=	-mthumb -mthumb-interwork
 
 # note: arm9tdmi isn't the correct CPU arch, but anything newer and LD
 # *insists* it has a FPU or VFP, and it won't take no for an answer!
-CFLAGS	:=	-g -Wall -Os\
+CFLAGS	:=	-g -Wall -O2\
  			-march=armv5te -mtune=arm946e-s -fomit-frame-pointer\
 			-ffast-math \
 			$(ARCH)
@@ -43,7 +43,7 @@ LDFLAGS	=	-specs=../../specs/ds_arm9.specs -g $(ARCH) -mno-fpu -Wl,-Map,$(notdir
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS	:=	-lelm -lio$(STORAGE) -lnds9
+LIBS	:=	-lfat -lelm -lio$(STORAGE) -lnds9 
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
