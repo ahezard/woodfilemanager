@@ -30,9 +30,9 @@
 #include "zoomingicon.h"
 
 #if defined(_STORAGE_rpg)
-#define SD_ROOT_0 "fat1:"
+#define SD_ROOT_0 "fat:"
 #else
-#define SD_ROOT_0 "fat0:"
+#define SD_ROOT_0 "fat:"
 #endif
 #define SD_ROOT SD_ROOT_0"/"
 

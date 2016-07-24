@@ -26,15 +26,13 @@
 extern "C" {
 #endif
 void __libnds_exit(int rc) {}
-void customSwiSoftReset(void);
-
 #ifdef __cplusplus
 }
 #endif
 
 void VblankHandler(void)
 {
-	inputGetAndSend();
+  inputGetAndSend();
 }
 
 #define PM_NDSLITE_ADR (4)
@@ -67,17 +65,16 @@ static void prepairReset()
   command[1]=0x00;
   rtcTransaction(command,2,0,0);
 
-  REG_POWERCNT|=POWER_SOUND;  
+  REG_POWERCNT|=POWER_SOUND;
 
   //reset DMA
-  zeroMemory((void *)0x40000B0,0x30);  
+  zeroMemory((void *)0x40000B0,0x30);
 
-  //REG_IME=IME_DISABLE;
-  //REG_IE=0;
+  REG_IME=IME_DISABLE;
+  REG_IE=0;
   REG_IF=~0;
-  
-  fifoSendValue32(FIFO_USER_01,MENU_MSG_ARM7_READY_BOOT);
 
+  fifoSendValue32(FIFO_USER_01,MENU_MSG_ARM7_READY_BOOT);
   swiDelay(1);
 }
 
@@ -110,13 +107,9 @@ static u8 brightnessGet(void)
   return data&PM_NDSLITE_BRIGHTNESS_MASK;
 }
 
-void menuValue32Handler(u32 value,void* data)
+static void menuValue32Handler(u32 value,void* data)
 {
-  //fifoSendValue32(FIFO_USER_01,value);
-  prepairReset();
-  customSwiSoftReset();
-  
-  /*switch(value)
+  switch(value)
   {
     case MENU_MSG_GBA:
       {
@@ -130,7 +123,7 @@ void menuValue32Handler(u32 value,void* data)
         swiSwitchToGBAMode();
       }
       break;
-    case MENU_MSG_ARM7_REBOOT:	  
+    case MENU_MSG_ARM7_REBOOT:
       prepairReset();
       swiSoftReset();
       break;
@@ -154,7 +147,7 @@ void menuValue32Handler(u32 value,void* data)
       else systemShutDown();
     default:
       break;
-  }*/
+  }
 }
 
 int main()
@@ -169,26 +162,17 @@ int main()
 
   irqInit();
   fifoInit();
+
   // Start the RTC tracking IRQ
   initClockIRQ();
 
+  fifoSetValue32Handler(FIFO_USER_01,menuValue32Handler,0);
+
   installSystemFIFO();
-  
-  irqSet(IRQ_VBLANK, VblankHandler);
 
-  irqEnable( IRQ_VBLANK | IRQ_NETWORK);  
+  irqSet(IRQ_VBLANK,VblankHandler);
 
-  //fifoSetValue32Handler(FIFO_USER_01,menuValue32Handler,0); 
+  irqEnable(IRQ_VBLANK|IRQ_NETWORK);
 
-  while(true) {
-  
-	if(fifoCheckValue32(FIFO_USER_01))
-		{
-			u32 value = fifoGetValue32(FIFO_USER_01);
-			
-			menuValue32Handler(value,0);
-		}
-	
-	swiIntrWait(1, IRQ_FIFO_NOT_EMPTY | IRQ_VBLANK);
-  }
+  while(true) swiWaitForVBlank();
 }

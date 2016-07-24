@@ -148,7 +148,7 @@ bool cMainList::enterDir( const std::string & dirName )
             if( 0 == i ) {
                 a_row.push_back( LANG("mainlist","flash memory") );
                 a_row.push_back( "" );
-                a_row.push_back( "fat0:/" );
+                a_row.push_back( "fat:/" );
                 rominfo.setBanner("nand",nand_banner_bin);
             }
             else
@@ -379,7 +379,7 @@ void cMainList::backParentDir()
         return;
 
     bool fat1=(SD_ROOT==_currentDir),favorites=("favorites:/"==_currentDir);
-    if( "fat0:/" == _currentDir || fat1 || favorites || "/" == _currentDir ) {
+    if( "fat0:/" == _currentDir || fat1 || favorites || "/" == _currentDir || "sd:/" == _currentDir || "fat:/" == _currentDir) {
         enterDir( "..." );
         if(fat1) selectRow(_topuSD);
         if(favorites) selectRow(_topFavorites);
