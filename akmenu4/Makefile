@@ -65,7 +65,7 @@ _DS_MENU.DAT	:	$(TARGET)_r4.nds
 
 #---------------------------------------------------------------------------------
 $(TARGET)_r4.nds	:	arm7/r4/$(TARGET).arm7 arm9/r4/$(TARGET).arm9
-	ndstool	-c $(TARGET)_r4.nds -7 arm7/r4/$(TARGET).arm7 -9 arm9/r4/$(TARGET).arm9 -e9 0x02000450 -e7 0x02380000 -b $(TARGET).bmp "wood r4"
+	ndstool	-c $(TARGET)_r4.nds -7 arm7/r4/$(TARGET).arm7 -9 arm9/r4/$(TARGET).arm9 -e9 0x02000450 -e7 0x02380000 -b $(TARGET).bmp "wood file manager"
 
 #---------------------------------------------------------------------------------
 arm7/r4/$(TARGET).arm7:
